@@ -46,7 +46,8 @@ function runOsa(script) {
 class SystemUtils {
   constructor() {
     this._initialized = false;
-    this._setupCleanup();
+    // FlexStudio shuts down the native module after quit confirmation.
+    if (!isElectron) this._setupCleanup();
   }
 
   _setupCleanup() {
@@ -62,15 +63,6 @@ class SystemUtils {
     process.on("SIGINT", cleanup);
     process.on("SIGTERM", cleanup);
 
-    if (isElectron) {
-      try {
-        const electron = require("electron");
-        const app = electron.app || (electron.remote && electron.remote.app);
-        if (app) {
-          app.on("before-quit", cleanup);
-        }
-      } catch {}
-    }
   }
 
   init() {
