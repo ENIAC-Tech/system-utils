@@ -19,18 +19,6 @@ try {
 
 const OSASCRIPT = "/usr/bin/osascript";
 
-function runOsaGet(script) {
-  try {
-    return execFileSync(OSASCRIPT, ["-e", script], {
-      encoding: "utf8",
-      timeout: 2000,
-      stdio: ["ignore", "pipe", "ignore"],
-    }).trim();
-  } catch {
-    return null;
-  }
-}
-
 function runOsa(script) {
   try {
     execFileSync(OSASCRIPT, ["-e", script], {
@@ -145,30 +133,6 @@ class SystemUtils {
 
   getMediaState(query) {
     this._ensureInitialized();
-    if (platform === "darwin") {
-      const result = {};
-      let ok = true;
-      if (query && query.speaker) {
-        const volRaw = runOsaGet("output volume of (get volume settings)");
-        const muteRaw = runOsaGet("output muted of (get volume settings)");
-        const volume = volRaw === null ? NaN : parseInt(volRaw, 10);
-        if (!Number.isNaN(volume) && (muteRaw === "true" || muteRaw === "false")) {
-          result.speaker = { volume, mute: muteRaw === "true" };
-        } else {
-          ok = false;
-        }
-      }
-      if (query && query.mic) {
-        const volRaw = runOsaGet("input volume of (get volume settings)");
-        const volume = volRaw === null ? NaN : parseInt(volRaw, 10);
-        if (!Number.isNaN(volume)) {
-          result.mic = { volume, mute: false };
-        } else {
-          ok = false;
-        }
-      }
-      if (ok) return result;
-    }
     return nativeModule.getMediaState(query);
   }
 

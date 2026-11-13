@@ -1,5 +1,6 @@
 {
   "name": "system-utils",
+  "os": ["win32", "darwin"],
   "version": "1.0.0",
   "description": "Cross-platform native system utilities module",
   "main": "index.js",
